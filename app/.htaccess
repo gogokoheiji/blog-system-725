@@ -5,11 +5,5 @@ RewriteEngine on
 RewriteCond %{REQUEST_URI} !^/index.php$
 
 # URLは全て/index.php?path=XXXに書き換え（QSAオプションで元のURLについていたパラメーターを結合）
-#RewriteRule ^(.*)$ /index.php?path=%{REQUEST_URI} [L,QSA]
-RewriteRule ^login(.*)$ /models/client/login.php?path=%{REQUEST_URI} [L,QSA]
-RewriteRule ^blog/entry(.*)$ /models/blog/entry.php?path=%{REQUEST_URI} [L,QSA]
-RewriteRule ^blog/category_entry(.*)$ /models/blog/category_entry.php?path=%{REQUEST_URI} [L,QSA]
-RewriteRule ^blog/category(.*)$ /models/blog/category.php?path=%{REQUEST_URI} [L,QSA]
-RewriteRule ^blog/setting(.*)$ /models/blog/setting.php?path=%{REQUEST_URI} [L,QSA]
-RewriteRule ^blog(.*)$ /models/blog/index.php?path=%{REQUEST_URI} [L,QSA]
+RewriteRule ^(.*)$ /index.php?path=%{REQUEST_URI} [L,QSA]
 </IfModule>

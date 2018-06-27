@@ -1,6 +1,8 @@
 <?php
 // URLマッピングファイル呼び出し
 require_once(dirname(__FILE__).'/url_list.php');
+// 共通ファンクション参照
+require_once(dirname(__FILE__).'/../functions/require.php');
 
 try {
 	session_start();

@@ -1,32 +1,5 @@
-<!DOCTYPE html>
-<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
-<!--[if !IE]><!-->
-<html lang="en">
-<!--<![endif]-->
-<head>
-	<!-- head_tag -->
-	<?php include(TEMPLATE_PATH."/head_tag.php"); ?>
-</head>
-<body>
-	<!-- #page-loader -->
-	<?php include(TEMPLATE_PATH."/page_loader.php"); ?>
-
-	<!-- begin #page-container -->
-	<div id="page-container" class="page-container fade page-sidebar-fixed page-header-fixed">
-
-		<!-- #header -->
-		<?php include(TEMPLATE_PATH."/header.php"); ?>
-
-		<!-- #sidebar -->
-		<?php include(TEMPLATE_PATH."/sidebar.php"); ?>
-
-		<!-- begin #content -->
-		<div id="content" class="content">
-			<!-- breadcrumb -->
-			<?php include(TEMPLATE_PATH."/breadcrumb.php"); ?>
-			<!-- begin page-header -->
-			<h1 class="page-header">Blank Page <small>header small text goes here...</small></h1>
-			<!-- end page-header -->
+			<!-- template_head -->
+			<?php include(TEMPLATE_PATH."/template_head.php"); ?>
 
 			<!-- begin panel -->
 			<div class="panel panel-inverse">
@@ -44,15 +17,5 @@
 				</div>
 			</div>
 			<!-- end panel -->
-		</div>
-		<!-- end #content -->
-
-		<!-- scroll to top btn -->
-		<?php include(TEMPLATE_PATH."/scroll_top.php"); ?>
-	</div>
-	<!-- end page container -->
-
-	<!-- scripts -->
-	<?php include(TEMPLATE_PATH."/scripts.php"); ?>
-</body>
-</html>
+		<!-- template_bottom -->
+		<?php include(TEMPLATE_PATH."/template_bottom.php"); ?>

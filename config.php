@@ -8,3 +8,5 @@ mb_internal_encoding("UTF-8");
 define('CONTENTS_SERVER_URL', 'http://c.blog-system-725.localhost');
 // テンプレートファイルパス
 define('TEMPLATE_PATH', 'C:/Dropbox/develop/blog-system-725/app/templates');
+// フッター
+define('COPYRIGHT', '&copy;'.date("Y").' SENSE SHARE All Rights Reserved.');

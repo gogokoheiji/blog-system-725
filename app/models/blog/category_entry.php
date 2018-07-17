@@ -1,10 +1,3 @@
-<!DOCTYPE html>
-<html lang="ja">
-	<head>
-		<meta charset="utf-8">
-		<title>ブログカテゴリー登録</title>
-	</head>
-	<body>
-		<h1>ブログカテゴリー登録</h1>
-	</body>
-</html>
+<?php include(TEMPLATE_PATH."/template_head.php"); ?>
+
+<?php include(TEMPLATE_PATH."/template_bottom.php"); ?>

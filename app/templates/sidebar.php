@@ -29,7 +29,7 @@
 				<ul class="sub-menu">
 					<li><a href="/blog/entry/">ブログ記事作成</a></li>
 					<li><a href="/blog/">記事一覧</a></li>
-					<li><a href="/blog/category/">カテゴリー一覧</a></li>
+					<li><a href="/blog/category/">カテゴリー管理</a></li>
 					<li><a href="/blog/setting/">ブログ基本設定</a></li>
 				</ul>
 			</li>

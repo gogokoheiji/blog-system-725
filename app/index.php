@@ -9,8 +9,8 @@ try {
 	$request_path = $_REQUEST['path'];
 
 	// ログインチェック
-	if (FALSE) {
-		include(dirname(__FILE__).'/models/client/login.php');
+	if ($request_path == '/signup/') {
+		include(dirname(__FILE__).'/models/client/signup.php');
 	} else {
 		if (isset($url_list[$request_path])) {
 			// アクセスされたURLのプログラムに処理を移譲

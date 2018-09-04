@@ -1,3 +1,114 @@
+<?php
+
+// 初期化
+$err_msg = array();
+$user = array();
+
+// Httpリクエスト判定
+if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+	// 初期表示
+
+	// 初期化
+
+} else {
+
+	// 入力パラメーターの取得
+	$user['client_name'] = $_POST['client_name'];
+	$user['mail_address'] = $_POST['mail_address'];
+	$user['password'] = $_POST['password'];
+	$user['password_confirm'] = $_POST['password_confirm'];
+	$user['secret_code'] = $_POST['secret_code'];
+	$user['agreement'] = $_POST['agreement'];
+
+	$pdo = connectDb();
+
+	// トランザクション処理を開始
+	$pdo->beginTransaction();
+
+	// クライアント名入力チェック
+	if ($user['client_name'] == '') {
+		$err_msg['client_name'] = 'アカウント名を入力してください。';
+	} else {
+		if (strlen(mb_convert_encoding($user['client_name'], 'SJIS', 'UTF-8')) > 200) {
+			$err_msg['client_name'] = 'アカウント名は200文字以内で入力してください。';
+		}
+	}
+	// メールアドレス入力チェック
+	if ($user['mail_address'] == '') {
+		$err_msg['mail_address'] = 'メールアドレスを入力してください。';
+	} else {
+		if (!filter_var($user['mail_address'], FILTER_VALIDATE_EMAIL)) {
+			$err_msg['mail_address'] = 'メールアドレスが不正です';
+		} else {
+			// メールアドレス存在チェック
+			if (checkEmail($pdo, $user['mail_address']) > 0) {
+				$err_msg['mail_address'] = 'このメールアドレスはすでに使用されています。';
+			}
+		}
+	}
+	// パスワード入力チェック
+	if ($user['password'] == '') {
+		$err_msg['password'] = 'パスワードが未入力です';
+	} else {
+		if (strlen(mb_convert_encoding($user['password'], 'SJIS', 'UTF-8')) < 8) {
+			$err_msg['password'] = 'パスワードは8文字以上で入力してください。';
+		} else {
+			// [パスワード再入力]
+			if ($user['password'] != $user['password_confirm']) {
+				$err_msg['password_confirm'] = '再入力パスワードが一致しません。';
+			}
+		}
+	}
+
+	// [招待コード]入力チェック
+	if ($user['secret_code'] == '') {
+		$err_msg['secret_code'] = '招待コードが未入力です';
+	} else {
+
+	}
+	// [規約ポリシー]チェック
+	if ($user['agreement'] != 1) {
+		$err_msg['agreement'] = 'アカウントを作成するには同意が必要です。';
+	} else {
+
+	}
+
+	// エラー判定
+	if (empty($err_msg)) {
+		try {
+			/* トランザクションを開始する。オートコミットがオフになる */
+			$pdo->beginTransaction();
+
+			// if ($result == false) throw new PDOException("beginTransaction failure");
+			echo __FILE__ . __LINE__;
+			exit;
+			try {
+				echo __FILE__ . __LINE__;
+				exit;
+				// クライアント新規登録
+				createUser($pdo, $user);
+
+				// INSERTされたデータのIDを取得
+				$tran_id = $pdo->lastInsertId();
+				// ブログ新規登録
+				createBlogId($pdo, $tran_id);
+				// トランザクション完了
+				$pdo->commit();
+			} catch (PDOException $e) {
+				echo 'Error!'.$e->getMessage();
+				// トランザクション取り消し
+				$pdo->rollBack();
+				exit;
+			}
+		} catch (Exception $e) {
+			echo 'Error!'.$e->getMessage();
+			echo __FILE__ . __LINE__;
+			exit;
+		}
+		unset($pdo);
+	}
+}
+ ?>
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
 <!--[if !IE]><!-->
@@ -66,40 +177,46 @@
                 <!-- end register-header -->
                 <!-- begin register-content -->
                 <div class="register-content">
-                    <form action="index.html" method="GET" class="margin-bottom-0">
-                        <label class="control-label">アカウント名 <span class="text-danger">*</span></label>
+                    <form action="" method="POST" class="margin-bottom-0">
+						<label class="control-label">アカウント名 <span class="text-danger">*</span></label>
                         <div class="row m-b-15">
                             <div class="col-md-12">
-                                <input type="text" class="form-control" name="client_name" value="" placeholder="" />
-                            </div>
+                                <input type="text" class="form-control <?php if ($err_msg['client_name'] != '') echo 'is-invalid'; ?>" name="client_name" value="" placeholder="" />
+								<div class="invalid-feedback"><?php echo $err_msg['client_name']; ?></div>
+							</div>
                         </div>
                         <label class="control-label">メールアドレス <span class="text-danger">*</span></label>
                         <div class="row m-b-15">
                             <div class="col-md-12">
-                                <input type="text" class="form-control" name="mail_address" value="" placeholder="" />
+                                <input type="email" class="form-control <?php if ($err_msg['mail_address'] != '') echo 'is-invalid'; ?>" name="mail_address" value="" placeholder="" />
+								<div class="invalid-feedback"><?php echo $err_msg['mail_address']; ?></div>
                             </div>
                         </div>
                         <label class="control-label">パスワード <span class="text-danger">*</span></label>
                         <div class="row row-space-10">
                             <div class="col-md-6 m-b-15">
-                                <input type="password" class="form-control"  name="password" value="" placeholder="8文字以上" />
-                            </div>
+                                <input type="password" class="form-control <?php if ($err_msg['password'] != '') echo 'is-invalid'; ?>"  name="password" value="" placeholder="8文字以上" />
+								<div class="invalid-feedback"><?php echo $err_msg['password']; ?></div>
+							</div>
 							<div class="col-md-6 m-b-15">
-                                <input type="password" class="form-control"  name="password_confirm" value="" placeholder="再入力" />
+                                <input type="password" class="form-control <?php if ($err_msg['password_confirm'] != '') echo 'is-invalid'; ?>"  name="password_confirm" value="" placeholder="再入力" />
+								<div class="invalid-feedback"><?php echo $err_msg['password_confirm']; ?></div>
                             </div>
                         </div>
                         <label class="control-label">招待コード <span class="text-danger">*</span></label>
                         <div class="row m-b-15">
                             <div class="col-md-12">
-                                <input type="text" class="form-control" name="secret_code" value="" placeholder="招待コードをお持ちの方のみがご登録頂けます。" />
+                                <input type="text" class="form-control <?php if ($err_msg['secret_code'] != '') echo 'is-invalid'; ?>" name="secret_code" value="" placeholder="招待コードをお持ちの方のみがご登録頂けます。" />
+								<div class="invalid-feedback"><?php echo $err_msg['secret_code']; ?></div>
                             </div>
                         </div>
-                        <div class="checkbox checkbox-css m-b-30">
+                        <div class="checkbox checkbox-css m-b-30 <?php if ($err_msg['agreement'] != '') echo 'is-invalid'; ?>">
                         	<div class="checkbox checkbox-css m-b-30">
 								<input type="checkbox" id="agreement" name="agreement" value="1">
 								<label for="agreement">
 									<a href="javascript:;">利用規約</a>及び<a href="javascript:;">プライバシーポリシー</a>に同意します。
 								</label>
+								<div class="m-t-5 text-danger"><?php echo $err_msg['agreement']; ?></div>
 							</div>
                         </div>
                         <div class="register-buttons">

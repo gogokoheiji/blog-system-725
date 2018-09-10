@@ -4,11 +4,12 @@
 $err_msg = array();
 $user = array();
 
+// セッション開始
+session_start();
+
 // Httpリクエスト判定
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	// 初期表示
-
-	// 初期化
 
 } else {
 
@@ -21,9 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	$user['agreement'] = $_POST['agreement'];
 
 	$pdo = connectDb();
-
-	// トランザクション処理を開始
-	$pdo->beginTransaction();
 
 	// クライアント名入力チェック
 	if ($user['client_name'] == '') {
@@ -79,12 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			/* トランザクションを開始する。オートコミットがオフになる */
 			$pdo->beginTransaction();
 
-			// if ($result == false) throw new PDOException("beginTransaction failure");
-			echo __FILE__ . __LINE__;
-			exit;
 			try {
-				echo __FILE__ . __LINE__;
-				exit;
 				// クライアント新規登録
 				createUser($pdo, $user);
 
@@ -94,6 +87,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 				createBlogId($pdo, $tran_id);
 				// トランザクション完了
 				$pdo->commit();
+				// クライアントセッション情報を格納
+				$_SESSION['client'] = $user;
+				sendMail($user, 0);
 			} catch (PDOException $e) {
 				echo 'Error!'.$e->getMessage();
 				// トランザクション取り消し
@@ -102,7 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			}
 		} catch (Exception $e) {
 			echo 'Error!'.$e->getMessage();
-			echo __FILE__ . __LINE__;
 			exit;
 		}
 		unset($pdo);

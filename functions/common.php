@@ -61,19 +61,31 @@ function createBlogId($pdo, $blog_id) {
 }
 
 // メール送信機能
-function sendMain($array_mail) {
+function sendMail($array_mail, $flag) {
 	mb_language("japanese");
 	mb_internal_encoding("UTF-8");
 
-	if ($array_mail['flag'] == 0) {
-		// 管理者にメール
+	// 新規ユーザー登録時のめーる
+	if ($flag == 0) {
+		/* 管理者へのメール start */
 		$mail_title = '【ブログ】新規ユーザ登録がありました。';
-	} elseif ($array_mail['flag'] == 1) {
-		// 新規登録ユーザーへのメール
+		$mail_body = '新規ユーザーの登録がありました。'.PHP_EOL;
+		$mail_body .= 'アカウント：'.$array_mail['client_name'].PHP_EOL;
+		$mail_body .= 'メールアドレス：'.$array_mail['mail_address'].PHP_EOL;
+		$mail_body .= '招待コード：'.$array_mail['secret_code'];
+		mb_send_mail(ADMIN_MAIL_ADDRESS, $mail_title, $mail_body);
+		/* 管理者へのメール end*/
+		/* ユーザーへのメール start */
 		$mail_title = '【ブログ】ご登録ありがとうございます。';
+		$mail_body = 'アカウント：'.$array_mail['client_name'].PHP_EOL;
+		$mail_body .= 'メールアドレス：'.$array_mail['mail_address'].PHP_EOL;
+		$mail_body .= '招待コード：'.$array_mail['secret_code'].PHP_EOL;
+		$mail_body .= 'それでは、引き続きよろしくお願いします。';
+		mb_send_mail($array_mail['mail_address'], $mail_title, $mail_body, $from);
+		/* ユーザーへのメール end */
+	// ユーザー情報更新時のメール
+	} elseif ($flag == 1) {
+
 	}
-	$mail_body = 'アカウント名：'.$array_mail['client_name'].PHP_EOL;
-	$mail_body .= 'メールアドレス：'.$array_mail['mail_address'].PHP_EOL;
-	$mail_body .= '招待コード：'.$array_mail['secret_code'];
-	mb_send_mail($array_mail['mail_address'], $mail_title, $mail_body);
+
 }

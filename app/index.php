@@ -8,6 +8,9 @@ try {
 	session_start();
 	$request_path = $_REQUEST['path'];
 
+	// DB接続
+	$pdo = connectDb();
+
 	// サインアップページの場合はログインチェック無し
 	if ($request_path == '/signup/') {
 		include(dirname(__FILE__).'/models/client/signup.php');
@@ -22,6 +25,7 @@ try {
 			}
 		}
 	}
+	unset($pdo);
 } catch (Exception $e) {
 	exit;
 }

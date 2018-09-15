@@ -4,11 +4,8 @@
 $err_msg = array();
 $user = array();
 
-// セッション開始
-session_start();
-
 // Httpリクエスト判定
-if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 	// 初期表示
 
 } else {
@@ -20,8 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 	$user['password_confirm'] = $_POST['password_confirm'];
 	$user['secret_code'] = $_POST['secret_code'];
 	$user['agreement'] = $_POST['agreement'];
-
-	$pdo = connectDb();
 
 	// クライアント名入力チェック
 	if ($user['client_name'] == '') {
@@ -100,7 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 			echo 'Error!'.$e->getMessage();
 			exit;
 		}
-		unset($pdo);
 	}
 }
  ?>

@@ -18,6 +18,20 @@ function connectDb() {
     }
 }
 
+// トークンを発行する
+function setToken() {
+	$token = sha1(uniqid(mt_rand(), true));
+	$_SESSION['sstoken'] = $token;
+}
+
+// トークンをチェックする
+function checkToken() {
+	if (empty($_SESSION['sstoken']) || ($_SESSION['sstoken'] != $_POST['token'])) {
+		echo '<html><head><meta charset="utf-8"></head><body>不正アクセスです。</body></html>';
+		exit;
+	}
+}
+
 // データベース（clientテーブル）メール重複チェック
 function checkEmail($pdo,$mail_address) {
 	$sql = "select COUNT(*) from client where mail_address = ?";

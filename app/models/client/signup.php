@@ -8,7 +8,12 @@ $user = array();
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 	// 初期表示
 
+	// CSRF対策
+	setToken();
 } else {
+
+	// CSRF対策
+	checkToken();
 
 	// 入力パラメーターの取得
 	$user['client_name'] = $_POST['client_name'];

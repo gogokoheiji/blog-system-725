@@ -223,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                         <p class="text-center">
                             &copy;2018 KOHEIJI BLOG All Rights Reserved.
                         </p>
-						<input type="hidden" name="FLUXDEMOTOKEN" value="" />
+						<input type="hidden" name="token" value="<?php echo h($_SESSION['sstoken']); ?>" />
                     </form>
                 </div>
                 <!-- end register-content -->

@@ -99,7 +99,7 @@
 						<p class="text-center text-grey-darker">
 							&copy;2018 SENSE SHARE All Rights Reserved.							</p>
 
-						<input type="hidden" name="FLUXDEMOTOKEN" value="3a49df10f957e4f5915c5b0f18ff26f9ade68ad8" />
+						<input type="hidden" name="token" value="<?php echo h($_SESSION['sstoken']); ?>" />
 					</form>
 				</div>
 				<!-- end login-content -->

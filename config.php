@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL & ~E_NOTICE);
+
 ini_set("date.timezone", "Asia/Tokyo");
 
 mb_language("japanese");

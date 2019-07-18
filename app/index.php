@@ -16,8 +16,8 @@ try {
 		include(dirname(__FILE__).'/models/client/signup.php');
 	} else {
 		// ログインチェック
-		if (TRUE) {
-			include(dirname(__FILE__).'/models/client/login.php');
+		if (check_client_login($pdo,$user['mail_address'],$user['password'])) {
+			header('Location:'.SITE_URL.'/blog/');
 		} else {
 			if (isset($url_list[$request_path])) {
 				// アクセスされたURLのプログラムに処理を移譲

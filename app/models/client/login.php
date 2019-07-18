@@ -1,3 +1,78 @@
+<?php
+
+// リクエスト判定
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
+	// フォームからサブミットされた時の処理
+
+	// 入力されたメールアドレス、パスワード
+	$user['mail_address'] = $_POST['mail_address'];
+	$user['password'] = $_POST['password'];
+	$user['auto_login'] = $_POST['auto_login'];
+echo $user['mail_address'];
+exit;
+	// [メールアドレス]未入力チェック
+	if ($user['mail_address'] == '') {
+		$err_msg['mail_address'] = 'メールアドレスを入力して下さい。';
+	} else {
+		// [メールアドレス]型チェック
+		if (!filter_var($user['mail_address'],FILTER_VALIDATE_EMAIL)) {
+			$err_msg['mail_address'] = 'メールアドレスが不正です。';
+		} else {
+			// [メールアドレス]存在チェック
+			if (checkEmail($pdo,$user['mail_address']) < 1) {
+				$err_msg['mail_address'] = 'このメールアドレスは登録されていません。';
+			}
+		}
+	}
+
+	// [パスワード]未入力チェック
+	if ($user['password'] == '') {
+		$err_msg['password'] = 'パスワードを入力してください';
+	} else {
+		if (loginUser($pdo,$user['mail_address'],$user['password']) < 1){
+			$err_msg['mail_address'] = 'メールアドレスかパスワードが一致してません。';
+		}
+	}
+
+	// エラーチェック
+	if (empty($err_msg)) {
+		// セッションハイジャック対策
+		session_regenerate_id(true);
+
+		// ログインに成功したのでセッションにユーザデータを保存する。
+		$_SESSION['USER'] = $user;
+
+		// 自動ログイン情報を一度クリアする
+		if (isset($_COOKIE['BLOGSYSTEM725'])) {
+			$auto_login_key = $_COOKIE['BLOGSYSTEM725'];
+
+			// cookie情報をクリア
+			setcookie('BLOGSYSTEM725','',time()-86400,COOKIE_PATH);
+		}
+
+		// 自動ログインを希望の場合はCookieとDBに情報を登録する。
+		if ($auto_login == 1) {
+			// 自動ログインキーを生成
+			$auto_login_key = chenge_code_sha1();
+			// Cookie登録処理
+			setcookie('BLOGSYSTEM725', $auto_login_key, time()+3600*24*365, COOKIE_PATH);
+			//DB登録処理
+
+		}
+
+		if(check_client_login($pdo, $user['mail_address'], $user['password'])){
+			// ホーム画面に遷移
+			header('Location:'.SITE_URL.'/blog/');
+			exit;
+		}
+	}
+	// DB切断
+	unset($pdo);
+} else {
+	// 初めて画面にアクセスしたときの処理
+}
+
+ ?>
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="ja" class="ie8"> <![endif]-->
 <!--[if !IE]><!-->
@@ -79,12 +154,12 @@
 				<div class="login-content">
 					<form method="POST" class="margin-bottom-0">
 						<div class="form-group m-b-15">
-							<input id="mail_address" name="mail_address" type="text" class="form-control form-control-lg " placeholder="メールアドレス" value="" />
-							<div class="invalid-feedback"></div>
+							<input id="mail_address" name="mail_address" type="text" class="form-control form-control-lg <?php if($err_msg['mail_address'] != '') echo 'is-invalid'; ?>" placeholder="メールアドレス" value="<?= $user['mail_address'] ?>" />
+							<div class="invalid-feedback"><?php echo $err_msg['mail_address']; ?></div>
 						</div>
 						<div class="form-group m-b-15">
-							<input id="password" name="password" type="password" class="form-control form-control-lg " placeholder="パスワード" value="" />
-							<div class="invalid-feedback"></div>
+							<input id="password" name="password" type="password" class="form-control form-control-lg <?php if($err_msg['password'] != '') echo 'is-invalid'; ?>" placeholder="パスワード" value="" />
+							<div class="invalid-feedback"><?php echo $err_msg['password']; ?></div>
 						</div>
 						<div class="checkbox checkbox-css m-b-30">
 							<input type="checkbox" id="auto_login" name="auto_login" value="1" />

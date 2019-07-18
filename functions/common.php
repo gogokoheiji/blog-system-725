@@ -44,6 +44,51 @@ function checkEmail($pdo,$mail_address) {
 	return $stmt->fetchColumn();
 
 }
+
+// ログイン機能
+function loginUser($pdo, $mail_address, $password){
+	$sql = "select * from client where mail_address = ? and password = ?";
+	$stmt = $pdo->prepare($sql);
+
+	$stmt->bindValue(1, $mail_address, PDO::PARAM_STR);
+	$stmt->bindValue(2, $password, PDO::PARAM_STR);
+
+	return $stmt->fetchAll();
+}
+
+// ログイン状態をチェック
+function check_client_login($pdo, $mail_address,$password){
+	$sql = "select count(*) from client where mail_address = ? and password = ?";
+	$stmt = $pdo->query($sql);
+
+	$stmt->bindValue(1, $mail_address, PDO::PARAM_INT);
+	$stmt->bindvalue(2, $password, PDO::PARAM_STR);
+	return $stmt->fetchColumn() > 0 ? true : false;
+}
+
+// 自動ログイン
+function check_auto_login(){
+	$sql = "";
+}
+
+// パスワード暗号化
+function chenge_code_sha1(){
+	return sha1(uniqid(mt_rand(),true));
+}
+
+// Cookie情報登録
+function addCookie($pdo ){
+
+}
+
+// autologin状態をクリアする
+function delete_auto_login($pdo, $c_key){
+	$sql = "delete from auto_login where c_key = ?";
+	$stmt = $pdo->prepare();
+
+	$stmt->bindValue(1, $c_key, PDO::PARAM_STR);
+}
+
 // データベース（clientテーブル）に新規登録する。
 function createUser($pdo, $user) {
 	$sql = "insert into client
